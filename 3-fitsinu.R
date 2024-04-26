@@ -43,11 +43,11 @@ fitsinu.pdf <- function(PDF.str, flip = FALSE, init.par = c(0, 1, 1, 1), lower.p
 
 fitsinu.ecdf <- function(data, flip = FALSE, init.par = c(1, 1), lower.par = c(0.001, 0.001), upper.par = c(500, 500), pgtol = 0) {
   a.out <- min(data); d.out <- max(data) - a.out
-  data.std <- (data - a.out) / d.out; ecdfAdj <- ecdf(data.std)
+  data.norm <- (data - a.out) / d.out; ecdfAdj <- ecdf(data.norm)
   
   ks.score <- function(pars) {
     omega <- pars[1]; chi <- pars[2]
-    devs <- ecdfAdj(data.std) - psinu(data.std, 0, 1, omega, chi, flip = FALSE)
+    devs <- ecdfAdj(data.norm) - psinu(data.norm, 0, 1, omega, chi, flip)
     return(mean(devs^2))
   }
   

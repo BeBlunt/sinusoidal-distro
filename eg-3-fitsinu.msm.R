@@ -3,15 +3,14 @@ fitsinu.msm.hist = function (data, str='', flip=F) {
   fit1 = fitsinu.msm(target)
   par1 = fit1$par
 
-  hist(data, prob=T, xlab='x', main='')
-  curve(dsinu(x, par1[1], par1[2], par1[3], par1[4], flip), add=T, col='red', lwd=2)
-  
-  pars = paste(round(par1, 1), collapse=', ')
-  
   if (str=='')
     str = deparse(substitute(data))
+  hist(data, prob=T, xlab='x', main='')
+  curve(dsinu(x, par1[1], par1[2], par1[3], par1[4], flip), add=T, col='red', lwd=3)
+  
+  pars = paste(round(par1, 1), collapse=', ')
   sinu.str = paste0('Sinu(',pars,')')
-  legend('topright', legend=c(str, sinu.str), fill=c('green','red'))
+  legend('topright', legend=c(str, sinu.str), fill=c('grey','red'))
 }
 
 ### fitsinu.mms.curve for PDFs
@@ -29,16 +28,30 @@ fitsinu.msm.curve = function(dist, str, flip=F, xlim=c(-3,3)) {
   legend('topright', legend=c(str, sinu.str), fill=c('green','red'))
 }
 
+
+### FITTING ###
+
+par(mfrow=c(1,3))
+
 ### BINOMIAL
 n=30; p=0.8; q=1-p
 target=c(n*p, n*p*q, (q-p)/sqrt(n*p*q), (1-6*p*q)/(n*p*q))
-fitsinu.msm.hist(rbinom(1000, n,p), str='Binom(30, 0.8)')
+fitsinu.msm.hist(rbinom(1000, n,p), str='1000x Binom(30, 0.8)')
 
 ### Poisson
 lambda = 5.6
 target=c(lambda, lambda, 1/sqrt(lambda), 1/lambda)
 
-fitsinu.msm.hist(rpois(1000, lambda), str='1000 rpois(5.6)')
+fitsinu.msm.hist(rpois(1000, lambda), str='1000x rpois(5.6)')
+
+### chickwts
+library(agricolae)
+chickData = chickwts$weight
+target= c(mean(chickData), var(chickData), skewness(chickData), kurtosis(chickData))
+fitsinu.msm.hist(chickData, str='Weights from chickwts dataset')
+
+### 
+par(mfrow=c(3,2))
 
 ### NORMAL
 target=c(0, 1, 0, 0)
